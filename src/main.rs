@@ -5,17 +5,22 @@ use serde_bytes_repr::{ByteFmtDeserializer, ByteFmtSerializer};
 
 mod common;
 
-use common::telemetry_data::{lap_data::PacketLapData, packet_header::*, session_data::PacketSessionData, motion_data::PacketMotionData, event_data::{PacketEventData, PacketEventFinal},
+use common::telemetry_data::{
     car_damage_data::PacketCarDamageData,
-    participant_data::PacketParticipantData,
     car_setup_data::PacketCarSetupData,
+    car_status_data::PacketCarStatusData,
     car_telemetry_data::PacketCarTelemetryData,
-    car_status_data::PacketCarStatusData
+    event_data::{PacketEventData, PacketEventFinal},
+    lap_data::PacketLapData,
+    motion_data::PacketMotionData,
+    packet_header::*,
+    participant_data::PacketParticipantData,
+    session_data::PacketSessionData,
 };
 
 #[tokio::main]
 async fn main() {
-    let mut vec : Vec<usize> = vec![];
+    let mut vec: Vec<usize> = vec![];
     loop {
         let mut buf = vec![0; 2048];
         let socket = UdpSocket::bind("127.0.0.1:20777").await.unwrap();
@@ -29,7 +34,7 @@ async fn main() {
             println!("{}", n);
             vec.push(n);
         }
-        
+
         // if n == 970 {
         //     println!("{:#?}", n);
         //     let decoded: Result<PacketLapData, _> = deserialize(&buf);
@@ -52,7 +57,7 @@ async fn main() {
         //     let decoded: PacketSessionData = decoded.unwrap();
         //     println!("{:#?}", decoded);
         // }
-        
+
         if n == 1058 {
             let decoded: Result<PacketCarStatusData, _> = deserialize(&buf);
             if decoded.is_err() {
